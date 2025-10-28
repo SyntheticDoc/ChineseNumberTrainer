@@ -10,4 +10,24 @@
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>hanlp</artifactId>
+            <version>portable-1.8.5</version>
+        </dependency>
+	
+	<dependency>
+	    <groupId>com.ibm.icu</groupId>
+	    <artifactId>icu4j</artifactId>
+	    <version>77.1</version>
+	</dependency>
+    </dependencies>
 </project>
