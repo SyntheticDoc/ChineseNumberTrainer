@@ -18,7 +18,16 @@ public class frmMain extends javax.swing.JFrame {
 	initComponents();
 	txtConsole.setEditable(false);
 	console = new ConsoleHandler(txtConsole);
+	converter = Converter.getInstance(console);
+	converter.convertFromGermanToChinese("54321");
 	console.cprintln("Program initialized.");
+	testRunner = new TestRunner(console);
+	console.cprintln("Running test cases...");
+	if(!testRunner.runAllTestCases(true)) {
+	    console.cprintln("Some test cases did not complete successfully. See above for details.");
+	} else {
+	    console.cprintln("All test cases have completed successfully!");
+	}
     }
 
     /**
@@ -51,6 +60,7 @@ public class frmMain extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
+        txtConsole.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jScrollPane2.setViewportView(txtConsole);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -131,4 +141,6 @@ public class frmMain extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     ConsoleHandler console;
+    Converter converter;
+    TestRunner testRunner;
 }

@@ -12,7 +12,7 @@ public class Converter {
     private static Converter instance;
     private static ConsoleHandler console;
     
-    private String[] measureUnits = new String[] {"十", "白", "千", "万", "亿", "兆", "京", "垓", "秭", "穰", "沟", "涧", "正", "载"};
+    private String[] measureUnits = new String[] {"十", "百", "千", "万", "亿", "兆", "京", "垓", "秭", "穰", "沟", "涧", "正", "载"};
     private String[] singleNumerals = new String[] {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
     
     private Converter(ConsoleHandler console) {
@@ -44,6 +44,7 @@ public class Converter {
 	int secondary_sigIndex = 0;
 	boolean isLeadingZero = false;
 	boolean inCurrentZeroField = false;
+	boolean isCurrentZeroSet = false;
 	
 	for(int i = (n.length() - 1); i >= 0; i--) {
 	    int curNum = n.charAt(i) - 48;
@@ -59,29 +60,69 @@ public class Converter {
 		if(curNum == 0) {
 		    if(isLeadingZero) {
 			// Skip this significance
-		    } else if(isCurrentZeroField) {
-			
+		    } else if(!isCurrentZeroSet) {
+			result = singleNumerals[curNum] + result;
+			isCurrentZeroSet = true;
+			inCurrentZeroField = true;
 		    }
 		} else {
-		    result = singleNumerals[curNum] + measureUnits[sigIndex] + result;
-		    sigIndex++;
+		    if(curNum == 1) {
+			result = measureUnits[0] + result;
+		    } else {
+			result = singleNumerals[curNum] + measureUnits[0] + result;
+		    }
+		    isCurrentZeroSet = false;
+		    inCurrentZeroField = false;
 		}
 	    } else if (curSignificance == 3) {
-		result = singleNumerals[curNum] + measureUnits[sigIndex] + result;
-		sigIndex++;
+		if(curNum == 0) {
+		    if(isLeadingZero) {
+			// Skip this significance
+		    } else if(!isCurrentZeroSet) {
+			result = singleNumerals[curNum] + result;
+			isCurrentZeroSet = true;
+			inCurrentZeroField = true;
+		    }
+		} else {
+		    result = singleNumerals[curNum] + measureUnits[1] + result;
+		    isCurrentZeroSet = false;
+		    inCurrentZeroField = false;
+		}
 	    } else if (curSignificance == 4) {
-		result = singleNumerals[curNum] + measureUnits[sigIndex] + result;
-		sigIndex++;
+		if(curNum == 0) {
+		    if(isLeadingZero) {
+			// Skip this significance
+		    } else if(!isCurrentZeroSet) {
+			result = singleNumerals[curNum] + result;
+			isCurrentZeroSet = true;
+			inCurrentZeroField = true;
+		    }
+		} else {
+		    result = singleNumerals[curNum] + measureUnits[2] + result;
+		    isCurrentZeroSet = false;
+		    inCurrentZeroField = false;
+		}
 	    } else if (curSignificance == 5) {
-		result = singleNumerals[curNum] + measureUnits[sigIndex] + result;
-		sigIndex++;
+		if(curNum == 0) {
+		    if(isLeadingZero) {
+			// Skip this significance
+		    } else if(!isCurrentZeroSet) {
+			result = singleNumerals[curNum] + result;
+			isCurrentZeroSet = true;
+			inCurrentZeroField = true;
+		    }
+		} else {
+		    result = singleNumerals[curNum] + measureUnits[3] + result;
+		    isCurrentZeroSet = false;
+		    inCurrentZeroField = false;
+		}
 	    } else if (curSignificance > 5 && curSignificance < 8) {
 		result = singleNumerals[curNum] + measureUnits[secondary_sigIndex] + result;
 		secondary_sigIndex++;
 	    }
 	    
-	    console.cprintln("n.length = " + n.length() + ", i = " + i + ", curSignificance = " + curSignificance + ", curNum = " + curNum);
-	    console.cprintln("  curResult: " + result);
+	    // console.cprintln("n.length = " + n.length() + ", i = " + i + ", curSignificance = " + curSignificance + ", curNum = " + curNum);
+	    // console.cprintln("  curResult: " + result);
 	}
 	
 	return result;
