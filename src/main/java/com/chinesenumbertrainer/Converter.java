@@ -13,7 +13,7 @@ public class Converter {
     private static ConsoleHandler console;
     
     private String[] measureUnits = new String[] {"十", "百", "千", "万", "亿", "兆", "京", "垓", "秭", "穰", "沟", "涧", "正", "载"};
-    private String[] singleNumerals = new String[] {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九"};
+    private String[] singleNumerals = new String[] {"零", "一", "两", "三", "四", "五", "六", "七", "八", "九"};
     
     private Converter(ConsoleHandler console) {
 	this.console = console;
@@ -44,7 +44,6 @@ public class Converter {
 	int secondary_sigIndex = 0;
 	boolean isLeadingZero = false;
 	boolean inCurrentZeroField = false;
-	boolean isCurrentZeroSet = false;
 	
 	for(int i = (n.length() - 1); i >= 0; i--) {
 	    int curNum = n.charAt(i) - 48;
@@ -54,70 +53,75 @@ public class Converter {
 		if(curNum == 0) {
 		    isLeadingZero = true;
 		} else {
-		    result = singleNumerals[curNum];
+		    result = getSingleNumeral(curNum, true);
 		}
 	    } else if (curSignificance == 2) {
 		if(curNum == 0) {
 		    if(isLeadingZero) {
 			// Skip this significance
-		    } else if(!isCurrentZeroSet) {
-			result = singleNumerals[curNum] + result;
-			isCurrentZeroSet = true;
+		    } else {
 			inCurrentZeroField = true;
 		    }
 		} else {
 		    if(curNum == 1) {
-			result = measureUnits[0] + result;
+			if(n.length() == 2) {
+			    result = measureUnits[0] + result;
+			} else {
+			    result = getSingleNumeral(curNum, true) + measureUnits[0] + result;
+			}
 		    } else {
-			result = singleNumerals[curNum] + measureUnits[0] + result;
+			result = getSingleNumeral(curNum, true) + measureUnits[0] + result;
 		    }
-		    isCurrentZeroSet = false;
 		    inCurrentZeroField = false;
+		    isLeadingZero = false;
 		}
 	    } else if (curSignificance == 3) {
 		if(curNum == 0) {
 		    if(isLeadingZero) {
 			// Skip this significance
-		    } else if(!isCurrentZeroSet) {
-			result = singleNumerals[curNum] + result;
-			isCurrentZeroSet = true;
+		    } else if(!inCurrentZeroField) {
 			inCurrentZeroField = true;
 		    }
 		} else {
-		    result = singleNumerals[curNum] + measureUnits[1] + result;
-		    isCurrentZeroSet = false;
-		    inCurrentZeroField = false;
+		    if(inCurrentZeroField) {
+			result = singleNumerals[0] + result;
+			inCurrentZeroField = false;
+			isLeadingZero = false;
+		    }
+		    result = getSingleNumeral(curNum) + measureUnits[1] + result;
 		}
 	    } else if (curSignificance == 4) {
 		if(curNum == 0) {
 		    if(isLeadingZero) {
 			// Skip this significance
-		    } else if(!isCurrentZeroSet) {
-			result = singleNumerals[curNum] + result;
-			isCurrentZeroSet = true;
+		    } else if(!inCurrentZeroField) {
 			inCurrentZeroField = true;
 		    }
 		} else {
-		    result = singleNumerals[curNum] + measureUnits[2] + result;
-		    isCurrentZeroSet = false;
-		    inCurrentZeroField = false;
+		    if(inCurrentZeroField) {
+			result = singleNumerals[0] + result;
+			inCurrentZeroField = false;
+			isLeadingZero = false;
+		    }
+		    result = getSingleNumeral(curNum) + measureUnits[2] + result;
 		}
 	    } else if (curSignificance == 5) {
 		if(curNum == 0) {
 		    if(isLeadingZero) {
 			// Skip this significance
-		    } else if(!isCurrentZeroSet) {
-			result = singleNumerals[curNum] + result;
-			isCurrentZeroSet = true;
+		    } else if(!inCurrentZeroField) {
 			inCurrentZeroField = true;
 		    }
 		} else {
-		    result = singleNumerals[curNum] + measureUnits[3] + result;
-		    isCurrentZeroSet = false;
-		    inCurrentZeroField = false;
+		    if(inCurrentZeroField) {
+			result = singleNumerals[0] + result;
+			inCurrentZeroField = false;
+			isLeadingZero = false;
+		    }
+		    result = getSingleNumeral(curNum) + measureUnits[3] + result;
 		}
 	    } else if (curSignificance > 5 && curSignificance < 8) {
-		result = singleNumerals[curNum] + measureUnits[secondary_sigIndex] + result;
+		result = getSingleNumeral(curNum) + measureUnits[secondary_sigIndex] + result;
 		secondary_sigIndex++;
 	    }
 	    
@@ -126,6 +130,18 @@ public class Converter {
 	}
 	
 	return result;
+    }
+    
+    private String getSingleNumeral(int index) {
+	return getSingleNumeral(index, false);
+    }
+    
+    private String getSingleNumeral(int index, boolean isOneOrTenSignificance) {
+	if(index == 2 && isOneOrTenSignificance) {
+	    return "二";
+	} else {
+	    return singleNumerals[index];
+	}
     }
     
     private int pow_int(int n, int exp) {
