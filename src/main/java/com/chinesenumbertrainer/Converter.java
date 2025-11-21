@@ -143,7 +143,7 @@ public class Converter {
 			isLeadingZero = false;
 		    }
 		    
-		    if((curSignificance - 1) % 8 == 0) {
+		    if((curSignificance - 1) % 4 == 0) {
 			boolean isOneOrTenSignificance = false;
 		
 			if(n.length() > curSignificance) {
@@ -151,7 +151,7 @@ public class Converter {
 			}
 		
 			result = getSingleNumeral(curNum, isOneOrTenSignificance) + result;
-		    } else if((curSignificance - 2) % 8 == 0) {
+		    } else if((curSignificance - 2) % 4 == 0) {
 			result = getSingleNumeral(curNum, true) + measureUnits[0] + result;
 		    } else {
 			result = getSingleNumeral(curNum) + measureUnits[sigIndex] + result;
