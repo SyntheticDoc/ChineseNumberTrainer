@@ -118,15 +118,48 @@ public class Converter {
 			inCurrentZeroField = false;
 			isLeadingZero = false;
 		    }
-		    result = getSingleNumeral(curNum) + measureUnits[3] + result;
+		    
+		    if(n.length() > 5) {
+			result = getSingleNumeral(curNum, true) + measureUnits[3] + result;
+		    } else {
+			result = getSingleNumeral(curNum) + measureUnits[3] + result;
+		    }
+		    
+		    sigIndex = 3;
 		}
-	    } else if (curSignificance > 5 && curSignificance < 8) {
-		result = getSingleNumeral(curNum) + measureUnits[secondary_sigIndex] + result;
-		secondary_sigIndex++;
+	    } else if (curSignificance > 5) {
+		if(curNum == 0) {
+		    if(isLeadingZero) {
+			// Skip this significance
+		    } else if(!inCurrentZeroField) {
+			inCurrentZeroField = true;
+		    }
+		} else {
+		    if(inCurrentZeroField) {
+			result = singleNumerals[0] + result;
+			inCurrentZeroField = false;
+			isLeadingZero = false;
+		    }
+		    
+		    if((curSignificance - 1) % 8 == 0) {
+			boolean isOneOrTenSignificance = false;
+		
+			if(n.length() > curSignificance) {
+			    isOneOrTenSignificance = true;
+			}
+		
+			result = getSingleNumeral(curNum, isOneOrTenSignificance) + result;
+		    } else if((curSignificance - 2) % 8 == 0) {
+			result = getSingleNumeral(curNum, true) + measureUnits[0] + result;
+		    } else {
+			result = getSingleNumeral(curNum) + measureUnits[sigIndex] + result;
+			sigIndex++;
+		    }
+		}
 	    }
 	    
-	    // console.cprintln("n.length = " + n.length() + ", i = " + i + ", curSignificance = " + curSignificance + ", curNum = " + curNum);
-	    // console.cprintln("  curResult: " + result);
+	    console.cprintln("n.length = " + n.length() + ", i = " + i + ", curSignificance = " + curSignificance + ", curNum = " + curNum);
+	    console.cprintln("  curResult: " + result);
 	}
 	
 	return result;
